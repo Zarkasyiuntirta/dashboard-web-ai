@@ -1,0 +1,71 @@
+:root {
+    --neon-cyan: #00f0ff;
+    --neon-purple: #9d4edd;
+    --neon-pink: #ff007f;
+    --neon-blue: #0072ff;
+}
+body {
+    font-family: 'Rajdhani', sans-serif;
+    background: radial-gradient(circle at 50% 50%, #0a051b 0%, #020108 100%);
+    overflow-x: hidden;
+}
+.tech-font { font-family: 'Orbitron', sans-serif; }
+
+/* 4D Glassmorphism + Neomorphism */
+.glass-panel {
+    background: rgba(10, 15, 30, 0.55);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 240, 255, 0.1);
+}
+.neon-glow-cyan { box-shadow: 0 0 20px rgba(0, 240, 255, 0.35); border-color: var(--neon-cyan); }
+.neon-glow-purple { box-shadow: 0 0 20px rgba(157, 78, 221, 0.35); border-color: var(--neon-purple); }
+
+/* 4D Scene & Perspective elements */
+.perspective-container { perspective: 1500px; }
+.flip-card-inner {
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.flipped { transform: rotateY(180deg); }
+.flip-front, .flip-back {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+.flip-back { transform: rotateY(180deg); }
+
+/* Moving Neon Aura behind card */
+.neon-aura {
+    position: absolute;
+    width: 150%;
+    height: 150%;
+    background: radial-gradient(circle, rgba(0,240,255,0.15) 0%, rgba(157,78,221,0.15) 30%, rgba(255,0,127,0.1) 60%, transparent 100%);
+    animation: auraRotation 12s linear infinite;
+    filter: blur(50px);
+    z-index: 0;
+    pointer-events: none;
+}
+@keyframes auraRotation {
+    0% { transform: translate(-15%, -15%) rotate(0deg); }
+    100% { transform: translate(-15%, -15%) rotate(360deg); }
+}
+
+/* 3D Grid Overlay */
+.cyber-grid {
+    background-size: 50px 50px;
+    background-image: linear-gradient(to right, rgba(0, 240, 255, 0.04) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
+    transform: rotateX(60deg);
+    transform-origin: top;
+    animation: gridMove 20s linear infinite;
+}
+@keyframes gridMove {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 1000px; }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 3px; }
