@@ -322,8 +322,7 @@ function renderUpdateDataTable() {
     // ================= 1. TAB DAFTAR HADIR =================
     if(currentSubTab === 'subAttendance') {
         // Mengganti judul dan menyematkan input manual nomor Pertemuan Ke
-        const subjectBadge = `<span class="text-xs text-slate-300 uppercase tracking-wider mr-3">Mapel: ${currentSubject}</span>`;
-        lbl.innerHTML = `${subjectBadge} Pertemuan Ke: <input type="number" id="inputPertemuanKe" value="${pertemuanKe}" class="w-16 bg-slate-950 border border-slate-800 text-center p-1 rounded text-cyan-400 font-mono focus:outline-none focus:border-cyan-400 inline-block ml-2">`;
+        lbl.innerHTML = `Pertemuan Ke: <input type="number" id="inputPertemuanKe" value="${pertemuanKe}" class="w-16 bg-slate-950 border border-slate-800 text-center p-1 rounded text-cyan-400 font-mono focus:outline-none focus:border-cyan-400 inline-block ml-2">`;
         
         // Memasang listener agar input manual langsung tersimpan di variabel state
         document.getElementById('inputPertemuanKe').addEventListener('input', (e) => {
@@ -380,8 +379,7 @@ function renderUpdateDataTable() {
     
     // ================= 2. TAB NILAI PROAKTIF =================
     else if(currentSubTab === 'subProactive') {
-        const subjectBadge = `<span class="text-xs text-slate-300 uppercase tracking-wider mr-3">Mapel: ${currentSubject}</span>`;
-        lbl.innerHTML = `${subjectBadge} Nilai Proaktif Core Matrix`;
+        lbl.innerHTML = `Nilai Proaktif Core Matrix`;
         
         // Date dihapus, ditambahkan kolom Jumlah Pertemuan yang sinkron dari tabel daftar hadir
         head.innerHTML = `
@@ -429,8 +427,7 @@ function renderUpdateDataTable() {
     
     // ================= 3. TAB NILAI TUGAS =================
     else if(currentSubTab === 'subTasks') {
-        const subjectBadge = `<span class="text-xs text-slate-300 uppercase tracking-wider mr-3">Mapel: ${currentSubject}</span>`;
-        lbl.innerHTML = `${subjectBadge} Nilai Tugas - Tugas Ke: <input type="number" id="inputTugasKe" min="1" value="${tugasKe}" class="w-16 bg-slate-950 border border-cyan-500/50 text-center p-1 rounded text-cyan-400 focus:outline-none focus:border-cyan-400" />`;
+        lbl.innerHTML = `Nilai Tugas - Tugas Ke: <input type="number" id="inputTugasKe" min="1" value="${tugasKe}" class="w-16 bg-slate-950 border border-cyan-500/50 text-center p-1 rounded text-cyan-400 focus:outline-none focus:border-cyan-400" />`;
         head.innerHTML = `
             <tr>
                 <th class="p-3">Nama</th>
@@ -485,8 +482,7 @@ function renderUpdateDataTable() {
 
     // ================= 4. TAB NILAI UJIAN =================
     else if(currentSubTab === 'subExams') {
-        const subjectBadge = `<span class="text-xs text-slate-300 uppercase tracking-wider mr-3">Mapel: ${currentSubject}</span>`;
-        lbl.innerHTML = `${subjectBadge} Nilai Ujian Core Matrix`;
+        lbl.innerHTML = `Nilai Ujian Core Matrix`;
         head.innerHTML = `
             <tr>
                 <th class="p-3">Nama</th>
@@ -528,8 +524,7 @@ function renderUpdateDataTable() {
     
     // ================= 5. TAB TOTAL NILAI SUMMARY =================
     else {
-        const subjectBadge = `<span class="text-xs text-slate-300 uppercase tracking-wider mr-3">Mapel: ${currentSubject}</span>`;
-        lbl.innerHTML = `${subjectBadge} Total Final Core Summary`;
+        lbl.innerHTML = `Total Final Core Summary`;
         head.innerHTML = `
             <tr>
                 <th class="p-3 text-center">Rank</th>
