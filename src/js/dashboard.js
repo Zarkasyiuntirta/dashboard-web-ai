@@ -60,11 +60,9 @@ function ensureSubjectDataset(subject) {
 }
 
 function generateInitialBackupDataset() {
-    const firstNames = ["Ahmad", "Budi", "Citra", "Dewi", "Eko", "Farhan", "Gita", "Hendra", "Indah", "Joko"];
-    const lastNames = ["Saputra", "Utami", "Wijaya", "Lestari", "Kusuma", "Nugroho", "Pratama", "Sari", "Hidayat"];
     let temp = [];
     for(let i=1; i<=30; i++) {
-        let rName = firstNames[Math.floor(Math.random()*firstNames.length)] + " " + lastNames[Math.floor(Math.random()*lastNames.length)];
+        let rName = "murid" + i;
         
         // Inisialisasi awal data kehadiran secara acak & seimbang
         let attendanceTotal = Math.floor(Math.random() * 4) + 16;
