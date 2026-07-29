@@ -1,4 +1,4 @@
-import { loadDataFromFirestore, initDashboardEngine, studentDataset, loginContext, resetChatAI } from './dashboard.js';
+import { loadDataFromFirestore, initDashboardEngine, studentDataset, loginContext, resetChatAI, firestoreConnected, updateFirestoreStatusIndicator } from './dashboard.js';
 
 // ================= ENGINE: 4D PARTICLES BACKGROUND =================
 const canvas = document.getElementById('particleCanvas');
@@ -119,6 +119,9 @@ authForm.addEventListener('submit', async (e) => {
         if (!isWalimurid) {
             await loadDataFromFirestore();
         }
+        
+        // Update status Firestore indicator setelah load data
+        updateFirestoreStatusIndicator();
 
         setTimeout(() => {
             document.getElementById('loginInterface').classList.add('hidden');
@@ -199,5 +202,10 @@ document.getElementById('btnLogout').addEventListener('click', () => {
     // Reset flag inisialisasi chat agar bisa di-init ulang dengan sapaan baru
     if (typeof resetChatAI === 'function') {
         resetChatAI();
+    }
+    
+    // Reset Firestore status indicator
+    if (typeof updateFirestoreStatusIndicator === 'function') {
+        updateFirestoreStatusIndicator();
     }
 });

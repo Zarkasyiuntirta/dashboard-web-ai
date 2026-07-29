@@ -116,6 +116,16 @@ function generateInitialBackupDataset() {
     return temp;
 }
 
+// === FIRESTORE CONNECTION STATUS INDICATOR ===
+export let firestoreConnected = false;
+
+export function updateFirestoreStatusIndicator() {
+    // Firestore status indicator is hidden from UI
+    const indicator = document.getElementById('firestoreStatus');
+    if (!indicator) return;
+    indicator.classList.add('hidden');
+}
+
 export async function loadDataFromFirestore() {
     try {
         const docRef = doc(db, "academic_core", "kelas6SD");
@@ -138,23 +148,138 @@ export async function loadDataFromFirestore() {
                     });
                 }
             });
+            
+            firestoreConnected = true;
+            updateFirestoreStatusIndicator();
+            console.log("✅ Firestore: Data berhasil dimuat dari cloud.");
         } else {
+            // Dokumen belum ada, buat baru dengan data default
             studentDataset = generateInitialBackupDataset();
-            await setDoc(docRef, { students: studentDataset });
+            await setDoc(docRef, { students: studentDataset, subjectList: subjectList, subjectData: subjectData });
+            firestoreConnected = true;
+            updateFirestoreStatusIndicator();
+            console.log("✅ Firestore: Dokumen baru berhasil dibuat.");
         }
     } catch (e) {
-        console.error("Cloud error, fallback used.", e);
-        studentDataset = generateInitialBackupDataset();
+        firestoreConnected = false;
+        updateFirestoreStatusIndicator();
+        
+        // JANGAN fallback ke data random! Biarkan data yang sudah ada di memory tetap dipakai.
+        // Hanya jika studentDataset masih kosong, baru generate data default.
+        if (studentDataset.length === 0) {
+            console.warn("⚠️ Firestore gagal diakses dan tidak ada data lokal. Menggunakan data default sementara.", e);
+            studentDataset = generateInitialBackupDataset();
+        } else {
+            console.warn("⚠️ Firestore gagal diakses, tetapi data lokal masih tersedia. Data tidak akan ditimpa.", e);
+        }
+        
+        // Tampilkan pesan error yang informatif
+        const errorMsg = getFirestoreErrorMessage(e);
+        console.error("❌ Firestore Error Detail:", errorMsg);
+        
+        // Tampilkan notifikasi ke user
+        showFirestoreNotification(errorMsg, 'error');
     }
 }
 
-async function syncToFirestoreCloud() {
-    try {
-        const docRef = doc(db, "academic_core", "kelas6SD");
-        await setDoc(docRef, { students: studentDataset, subjectList: subjectList, subjectData: subjectData });
-        alert("✨ SYSTEM UPDATE: Data berhasil disimpan ke Google Firestore Cloud!");
-    } catch (e) {
-        alert("🚨 Gagal sinkronisasi data!");
+function getFirestoreErrorMessage(error) {
+    const code = error.code || '';
+    const message = error.message || '';
+    
+    if (code === 'permission-denied' || message.includes('permission')) {
+        return '🚫 Firestore Security Rules memblokir akses. Periksa pengaturan security rules di console Firebase.';
+    }
+    if (code === 'unavailable' || message.includes('unavailable')) {
+        return '🌐 Firestore tidak dapat dijangkau. Periksa koneksi internet Anda.';
+    }
+    if (code === 'not-found') {
+        return '📄 Dokumen tidak ditemukan di Firestore.';
+    }
+    if (code === 'deadline-exceeded') {
+        return '⏱️ Koneksi ke Firestore timeout. Coba refresh halaman.';
+    }
+    if (code === 'resource-exhausted') {
+        return '📦 Kuota Firestore habis. Upgrade paket atau tunggu reset kuota.';
+    }
+    if (message.includes('Failed to fetch') || message.includes('NetworkError')) {
+        return '🌐 Gagal terhubung ke Firestore. Periksa koneksi internet Anda.';
+    }
+    return `❌ Error Firestore: ${message.substring(0, 200)}`;
+}
+
+function showFirestoreNotification(message, type = 'error') {
+    // Cari atau buat elemen notifikasi
+    let notif = document.getElementById('firestoreNotification');
+    if (!notif) {
+        notif = document.createElement('div');
+        notif.id = 'firestoreNotification';
+        notif.className = 'fixed top-4 right-4 z-50 max-w-md transition-all duration-500 transform translate-x-0';
+        document.body.appendChild(notif);
+    }
+    
+    const bgColor = type === 'error' ? 'bg-red-900/90 border-red-500/50' : 'bg-emerald-900/90 border-emerald-500/50';
+    const icon = type === 'error' ? '🔴' : '🟢';
+    
+    notif.innerHTML = `
+        <div class="${bgColor} border rounded-xl p-4 shadow-2xl backdrop-blur-sm">
+            <div class="flex items-start gap-3">
+                <span class="text-lg">${icon}</span>
+                <div class="flex-1">
+                    <p class="text-sm text-slate-100 font-semibold">${type === 'error' ? 'Firestore Error' : 'Firestore Sukses'}</p>
+                    <p class="text-xs text-slate-300 mt-1">${message}</p>
+                </div>
+                <button onclick="this.closest('#firestoreNotification').remove()" class="text-slate-400 hover:text-white text-lg leading-none">&times;</button>
+            </div>
+        </div>
+    `;
+    
+    // Auto-hide setelah 8 detik
+    setTimeout(() => {
+        if (notif && notif.parentNode) {
+            notif.style.opacity = '0';
+            notif.style.transform = 'translateX(100%)';
+            setTimeout(() => notif.remove(), 500);
+        }
+    }, 8000);
+}
+
+async function syncToFirestoreCloud(retryCount = 3) {
+    for (let attempt = 1; attempt <= retryCount; attempt++) {
+        try {
+            const docRef = doc(db, "academic_core", "kelas6SD");
+            await setDoc(docRef, { 
+                students: studentDataset, 
+                subjectList: subjectList, 
+                subjectData: subjectData 
+            });
+            
+            firestoreConnected = true;
+            updateFirestoreStatusIndicator();
+            
+            // Notifikasi sukses (hanya tampilkan di percobaan terakhir)
+            if (attempt === 1) {
+                showFirestoreNotification('✅ Data berhasil disimpan ke Google Firestore Cloud!', 'success');
+            }
+            console.log(`✅ Firestore Sync: Data berhasil disimpan (percobaan ke-${attempt})`);
+            return true;
+        } catch (e) {
+            console.warn(`⚠️ Firestore Sync: Percobaan ke-${attempt} gagal.`, e.message);
+            
+            if (attempt < retryCount) {
+                // Tunggu sebentar sebelum retry (exponential backoff)
+                const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+                await new Promise(resolve => setTimeout(resolve, delay));
+            } else {
+                // Semua percobaan gagal
+                firestoreConnected = false;
+                updateFirestoreStatusIndicator();
+                
+                const errorMsg = getFirestoreErrorMessage(e);
+                showFirestoreNotification(`🚨 Gagal sinkronisasi data ke Firestore setelah ${retryCount} percobaan.\n${errorMsg}`, 'error');
+                console.error("❌ Firestore Sync: Semua percobaan gagal.", e);
+                return false;
+            }
+        }
     }
 }
 
