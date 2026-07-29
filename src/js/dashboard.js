@@ -591,16 +591,17 @@ function renderStudentManagementTable() {
             
         tbody.appendChild(tr);
 
-        document.getElementById(`nameIn-${idx}`).addEventListener('change', (e) => { 
+        document.getElementById(`nameIn-${idx}`).addEventListener('change', async (e) => { 
             s.name = e.target.value; 
             // propagate to subject datasets
             Object.keys(subjectData).forEach(key => {
                 if (subjectData[key] && subjectData[key][idx]) subjectData[key][idx].name = s.name;
             });
             populateStudentDropdowns();
+            await syncToFirestoreCloud();
         });
 
-        document.getElementById(`nimIn-${idx}`).addEventListener('change', (e) => {
+        document.getElementById(`nimIn-${idx}`).addEventListener('change', async (e) => {
             let newNim = parseInt(e.target.value);
             if (isNaN(newNim)) {
                 alert("NIM harus berupa angka!");
@@ -619,6 +620,7 @@ function renderStudentManagementTable() {
                 if (subjectData[key] && subjectData[key][idx]) subjectData[key][idx].nim = s.nim;
             });
             populateStudentDropdowns();
+            await syncToFirestoreCloud();
         });
 
         document.getElementById(`fileInput-${idx}`).addEventListener('change', function(e) {
@@ -629,7 +631,7 @@ function renderStudentManagementTable() {
                     return;
                 }
                 const reader = new FileReader();
-                reader.onload = function(event) {
+                reader.onload = async function(event) {
                     const base64Image = event.target.result;
                     document.getElementById(`avatarImg-${idx}`).src = base64Image;
                     s.avatar = base64Image;
@@ -640,6 +642,8 @@ function renderStudentManagementTable() {
                             subjectData[key][idx].avatar = base64Image;
                         }
                     });
+                    
+                    await syncToFirestoreCloud();
                 };
                 reader.readAsDataURL(file);
             }
@@ -848,7 +852,7 @@ document.getElementById('btnActionSubmitData').addEventListener('click', async (
 
 document.getElementById('btnActionSubmitStud').addEventListener('click', syncToFirestoreCloud);
 
-document.getElementById('btnAddStudent').addEventListener('click', () => {
+document.getElementById('btnAddStudent').addEventListener('click', async () => {
     let namePrompt = prompt("Nama Murid Baru:");
     if(!namePrompt) return;
     
@@ -903,6 +907,7 @@ document.getElementById('btnAddStudent').addEventListener('click', () => {
     });
     populateStudentDropdowns();
     renderStudentManagementTable();
+    await syncToFirestoreCloud();
 });
 
 // ---------------- Subject UI & CRUD (Add / Edit / Delete) ----------------

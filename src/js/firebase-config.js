@@ -8,7 +8,7 @@ const firebaseConfig = {
   storageBucket: "dashboardai-70b75.firebasestorage.app",
   messagingSenderId: "869027364699",
   appId: "1:869027364699:web:8840eec44fbfe0277d647e",
-  measurementId: "G-SKVJRERBC3"
+  measurementId: "G-SKVJRERBC3"/*  */
 };
 
 const app = initializeApp(firebaseConfig);
