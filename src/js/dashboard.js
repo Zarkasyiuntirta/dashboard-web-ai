@@ -502,7 +502,7 @@ function renderUpdateDataTable() {
     
     // ================= 2. TAB NILAI PROAKTIF =================
     else if(currentSubTab === 'subProactive') {
-        lbl.innerHTML = `Nilai Proaktif Core Matrix`;
+        lbl.innerHTML = `Nilai Proaktif`;
         
         // Date dihapus, ditambahkan kolom Jumlah Pertemuan yang sinkron dari tabel daftar hadir
         head.innerHTML = `
@@ -550,7 +550,7 @@ function renderUpdateDataTable() {
     
     // ================= 3. TAB NILAI TUGAS =================
     else if(currentSubTab === 'subTasks') {
-        lbl.innerHTML = `Nilai Tugas - Tugas Ke: <input type="number" id="inputTugasKe" min="1" value="${tugasKe}" class="w-16 bg-slate-950 border border-cyan-500/50 text-center p-1 rounded text-cyan-400 focus:outline-none focus:border-cyan-400" />`;
+        lbl.innerHTML = `Tugas Ke: <input type="number" id="inputTugasKe" min="1" value="${tugasKe}" class="w-16 bg-slate-950 border border-cyan-500/50 text-center p-1 rounded text-cyan-400 focus:outline-none focus:border-cyan-400" />`;
         head.innerHTML = `
             <tr>
                 <th class="p-3">Nama</th>
@@ -605,7 +605,7 @@ function renderUpdateDataTable() {
 
     // ================= 4. TAB NILAI UJIAN =================
     else if(currentSubTab === 'subExams') {
-        lbl.innerHTML = `Nilai Ujian Core Matrix`;
+        lbl.innerHTML = `Nilai Ujian`;
         head.innerHTML = `
             <tr>
                 <th class="p-3">Nama</th>
@@ -647,7 +647,7 @@ function renderUpdateDataTable() {
     
     // ================= 5. TAB TOTAL NILAI SUMMARY =================
     else {
-        lbl.innerHTML = `Total Final Core Summary`;
+        lbl.innerHTML = `Total Nilai`;
         head.innerHTML = `
             <tr>
                 <th class="p-3 text-center">Rank</th>
