@@ -77,7 +77,7 @@ authForm.addEventListener('submit', async (e) => {
     const cleanPass = String(pass || '').trim();
 
     // ADMIN: tetap hardcoded
-    const isAdmin = cleanUser === 'admin' && cleanPass === '13579';
+    const isAdmin = cleanUser === 'Admin' && cleanPass === '123456798';
 
     // MURID: username = NIM, password = NIM yang sama (dari data murid)
     const nimAsNumber = parseInt(cleanUser, 10);
